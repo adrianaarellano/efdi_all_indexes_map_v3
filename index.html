@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EfDI Interactive Web Map</title>
+  <!-- CSS for styling -->
   <style>
+    /* General Reset */
     * {
       margin: 0;
       padding: 0;
@@ -16,6 +18,7 @@
       line-height: 1.5;
     }
 
+    /* Top Tabs */
     .tabs {
       display: flex;
       justify-content: space-around;
@@ -41,6 +44,7 @@
       background-color: #1abc9c;
     }
 
+    /* Dropdown Menu for Nested Navigation */
     .dropdown-menu {
       display: none;
       position: absolute;
@@ -68,6 +72,7 @@
       background-color: #f1f1f1;
     }
 
+    /* Breadcrumb Navigation */
     #breadcrumbs {
       padding: 10px;
       background-color: #ecf0f1;
@@ -90,11 +95,13 @@
       text-decoration: underline;
     }
 
+    /* Year Selector */
     .year-selector {
       margin: 10px 0;
       text-align: center;
     }
 
+    /* Iframe Styling */
     #mapFrame {
       display: block;
       width: 100%;
@@ -103,6 +110,7 @@
       transition: opacity 0.5s ease-in-out;
     }
 
+    /* Breadcrumb Transition */
     .fade-out {
       opacity: 0;
     }
@@ -113,29 +121,37 @@
   </style>
 </head>
 <body>
-
+  <!-- Tabs for Sub-Indexes -->
   <div class="tabs">
-    <div class="tab active-tab" onclick="switchTab('index_all', 'EfDI > All Indicators')">EfDI All</div>
-
+    <!-- Dropdown for EfDI -->
     <div class="tab">
-      Curriculum
+      EfDI
       <div class="dropdown-menu">
-        <div class="dropdown-item" onclick="switchTab('subindex_overall_cur', 'EfDI > Curriculum > Subindex')">Subindex</div>
-        <div class="dropdown-item" onclick="switchTab('indicator_overall_cur_policy', 'EfDI > Curriculum > Policy Indicator')">Policy</div>
-        <div class="dropdown-item" onclick="switchTab('indicator_overall_cur_prac', 'EfDI > Curriculum > Practice Indicator')">Practice</div>
+        <div class="dropdown-item" onclick="switchTab('efdi_all', 'EfDI > All Indicators')">All Indicators</div>
+        <div class="dropdown-item" onclick="switchTab('non_system', 'EfDI > Non-system')">Non-system</div>
       </div>
     </div>
 
+    <!-- Tab for Curriculum with Nested Dropdown -->
+    <div class="tab">
+      Curriculum
+      <div class="dropdown-menu">
+        <div class="dropdown-item" onclick="switchTab('cur_policy', 'EfDI > Curriculum > Policy')">Policy</div>
+        <div class="dropdown-item" onclick="switchTab('cur_practice', 'EfDI > Curriculum > Practice')">Practice</div>
+      </div>
+    </div>
+
+    <!-- Add more tabs for other sub-indexes -->
     <div class="tab">
       Autonomy
       <div class="dropdown-menu">
-        <div class="dropdown-item" onclick="switchTab('subindex_overall_auto', 'EfDI > Autonomy > Subindex')">Subindex</div>
-        <div class="dropdown-item" onclick="switchTab('indicator_overall_auto_policy', 'EfDI > Autonomy > Policy Indicator')">Policy</div>
-        <div class="dropdown-item" onclick="switchTab('indicator_overall_auto_prac', 'EfDI > Autonomy > Practice Indicator')">Practice</div>
+        <div class="dropdown-item" onclick="switchTab('auto_policy', 'EfDI > Autonomy > Policy')">Policy</div>
+        <div class="dropdown-item" onclick="switchTab('auto_practice', 'EfDI > Autonomy > Practice')">Practice</div>
       </div>
     </div>
   </div>
 
+  <!-- Year Selector -->
   <div class="year-selector">
     <label for="year">Select Year:</label>
     <select id="year" onchange="updateYear(this.value)">
@@ -145,42 +161,47 @@
     </select>
   </div>
 
+  <!-- Breadcrumb Navigation -->
   <div id="breadcrumbs">
     <span id="breadcrumb-path"><a href="#" onclick="resetBreadcrumb()">EfDI</a> > All Indicators</span>
   </div>
 
+  <!-- Map Iframe -->
   <iframe id="mapFrame" src="https://adrianaarellano.github.io/index_all_2022/"></iframe>
 
+  <!-- JavaScript for Interactivity -->
   <script>
-    let currentYear = "2022";
-    let currentTab = "index_all";
+    let currentYear = "2022"; // Default year
+    let currentTab = "efdi_all"; // Default tab
     const baseURL = "https://adrianaarellano.github.io/";
 
+    // Function to handle year updates
     function updateYear(year) {
       currentYear = year;
-      switchTab(currentTab);
+      switchTab(currentTab); // Refresh the map with the new year
     }
 
+    // Function to handle tab switching and breadcrumb updates
     function switchTab(mapID, breadcrumbPath = '') {
       const mapFrame = document.getElementById("mapFrame");
       const breadcrumb = document.getElementById("breadcrumb-path");
-      currentTab = mapID;
+      currentTab = mapID; // Update the current tab
 
+      // Fade out the iframe
       mapFrame.classList.add("fade-out");
 
+      // Update iframe source after delay
       setTimeout(function () {
         const mapURLs = {
-          index_all: `${baseURL}index_all_${currentYear}/`,
-          subindex_overall_cur: `${baseURL}subindex_cur_${currentYear}/`,
-          indicator_overall_cur_policy: `${baseURL}indicator_${currentYear}_overall_cur_policy/`,
-          indicator_overall_cur_prac: `${baseURL}indicator_${currentYear}_overall_cur_prac/`,
-          subindex_overall_auto: `${baseURL}subindex_overall_${currentYear}_auto/`,
-          indicator_overall_auto_policy: `${baseURL}indicator_overall_${currentYear}_auto_policy/`,
-          indicator_overall_auto_prac: `${baseURL}indicator_overall_${currentYear}_auto_prac/`,
-          // Add more mappings as needed
+          efdi_all: `${baseURL}index_all_${currentYear}/`,
+          non_system: `${baseURL}index_non_${currentYear}/`,
+          cur_policy: `${baseURL}subindex_non-system_cur_${currentYear}/`,
+          cur_practice: `${baseURL}indicator_${currentYear}_non-system_cur_prac/`,
+          auto_policy: `${baseURL}subindex_non-system_${currentYear}_auto/`,
+          auto_practice: `${baseURL}indicator_non_system_${currentYear}_auto_prac/`
         };
 
-        mapFrame.src = mapURLs[mapID] || mapURLs['index_all'];
+        mapFrame.src = mapURLs[mapID] || mapURLs['efdi_all'];
         if (breadcrumbPath) {
           breadcrumb.innerHTML = `<a href="#" onclick="resetBreadcrumb()">EfDI</a> > ${breadcrumbPath}`;
         }
@@ -190,11 +211,10 @@
       }, 500);
     }
 
+    // Function to reset breadcrumb to default
     function resetBreadcrumb() {
-      switchTab('index_all', 'All Indicators');
+      switchTab('efdi_all', 'All Indicators');
     }
   </script>
 </body>
 </html>
-
-
