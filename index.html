@@ -6,7 +6,6 @@
   <title>EfDI Interactive Web Map</title>
   <!-- CSS for styling -->
   <style>
-    /* General Reset */
     * {
       margin: 0;
       padding: 0;
@@ -18,14 +17,12 @@
       line-height: 1.5;
     }
 
-    /* Top Tabs */
     .tabs {
       display: flex;
       justify-content: space-around;
       background-color: #2c3e50;
       color: white;
       padding: 10px 0;
-      position: relative;
     }
 
     .tab {
@@ -44,7 +41,6 @@
       background-color: #1abc9c;
     }
 
-    /* Dropdown Menu for Nested Navigation */
     .dropdown-menu {
       display: none;
       position: absolute;
@@ -72,7 +68,6 @@
       background-color: #f1f1f1;
     }
 
-    /* Breadcrumb Navigation */
     #breadcrumbs {
       padding: 10px;
       background-color: #ecf0f1;
@@ -95,13 +90,11 @@
       text-decoration: underline;
     }
 
-    /* Year Selector */
     .year-selector {
       margin: 10px 0;
       text-align: center;
     }
 
-    /* Iframe Styling */
     #mapFrame {
       display: block;
       width: 100%;
@@ -110,7 +103,6 @@
       transition: opacity 0.5s ease-in-out;
     }
 
-    /* Breadcrumb Transition */
     .fade-out {
       opacity: 0;
     }
@@ -122,9 +114,7 @@
 </head>
 <body>
 
-  <!-- Tabs for Sub-Indexes -->
   <div class="tabs">
-    <!-- Tab for EfDI with Nested Dropdown -->
     <div class="tab">
       EfDI
       <div class="dropdown-menu">
@@ -133,7 +123,6 @@
       </div>
     </div>
 
-    <!-- Tab for Curriculum with Nested Dropdown -->
     <div class="tab">
       Curriculum
       <div class="dropdown-menu">
@@ -142,7 +131,6 @@
       </div>
     </div>
 
-    <!-- Add more tabs for other sub-indexes -->
     <div class="tab">
       Training
       <div class="dropdown-menu">
@@ -151,7 +139,6 @@
     </div>
   </div>
 
-  <!-- Year Selector -->
   <div class="year-selector">
     <label for="year">Select Year:</label>
     <select id="year" onchange="updateYear(this.value)">
@@ -161,45 +148,36 @@
     </select>
   </div>
 
-  <!-- Breadcrumb Navigation -->
   <div id="breadcrumbs">
     <span id="breadcrumb-path"><a href="#" onclick="resetBreadcrumb()">EfDI</a> > All Indicators</span>
   </div>
 
-  <!-- Map Iframe -->
   <iframe id="mapFrame" src="https://adrianaarellano.github.io/index_all_2022/"></iframe>
 
-  <!-- JavaScript for Interactivity -->
   <script>
-    let currentYear = "2022"; // Default year
-    let currentTab = "efdi_all"; // Default tab
+    let currentYear = "2022";
+    let currentTab = "efdi_all";
     const baseURL = "https://adrianaarellano.github.io/";
 
-    // Function to handle year updates
     function updateYear(year) {
       currentYear = year;
-      switchTab(currentTab); // Refresh the map with the new year
+      switchTab(currentTab); 
     }
 
-    // Function to handle tab switching and breadcrumb updates
     function switchTab(mapID, breadcrumbPath = '') {
       const mapFrame = document.getElementById("mapFrame");
       const breadcrumb = document.getElementById("breadcrumb-path");
-      currentTab = mapID; // Update the current tab
+      currentTab = mapID;
 
-      // Fade out the iframe
       mapFrame.classList.add("fade-out");
 
-      // Update iframe source after delay
       setTimeout(function () {
         const mapURLs = {
           efdi_all: `${baseURL}index_all_${currentYear}/`,
           efdi_non_system: `${baseURL}index_non_${currentYear}/`,
           cur_policy: `${baseURL}subindex_non-system_cur_${currentYear}/`,
           cur_practice: `${baseURL}indicator_non-system_cur_prac_${currentYear}/`,
-          training_policy: `${baseURL}training_policy_${currentYear}/`,
-          cur_aim_all: `${baseURL}subindicator_cur_all_${currentYear}/`,
-          cur_aim_non_system: `${baseURL}subindicator_cur_non_system_${currentYear}/`
+          training_policy: `${baseURL}training_policy_${currentYear}/`
         };
 
         mapFrame.src = mapURLs[mapID] || mapURLs['efdi_all'];
@@ -212,16 +190,8 @@
       }, 500);
     }
 
-    // Function to reset breadcrumb to default
     function resetBreadcrumb() {
       switchTab('efdi_all', 'All Indicators');
-    }
-
-    // Navigate deeper into sub-indicators
-    function navigateToAim(isNonSystem) {
-      const breadcrumb = document.getElementById("breadcrumb-path");
-      const aimKey = isNonSystem ? 'cur_aim_non_system' : 'cur_aim_all';
-      switchTab(aimKey, breadcrumb.innerHTML + " > Aim");
     }
   </script>
 </body>
