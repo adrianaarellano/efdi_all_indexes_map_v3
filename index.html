@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EfDI Interactive Web Map</title>
+  <style>
+    /* General styles */
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    .tabs, .year-selector {
+      margin: 10px;
+    }
+
+    .tabs div {
+      display: inline-block;
+      margin-right: 15px;
+      cursor: pointer;
+      padding: 10px;
+      background-color: #f4f4f4;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .tabs div:hover, .tabs div.active-tab {
+      background-color: #ddd;
+    }
+
+    #mapFrame {
+      width: 100%;
+      height: 600px;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Year Selector -->
+  <div class="year-selector">
+    <label for="year">Select Year:</label>
+    <select id="year" onchange="updateYear(this.value)">
+      <option value="2022" selected>2022</option>
+      <option value="2016">2016</option>
+      <option value="2009">2009</option>
+    </select>
+  </div>
+
+  <!-- Tabs for Navigation -->
+  <div class="tabs">
+    <div class="tab" onclick="switchTab('index_overall', 'Overall Index')">Overall Index</div>
+    <div class="tab" onclick="switchTab('index_non', 'Non-System Index')">Non-System Index</div>
+  </div>
+
+  <!-- Dropdown for Subindex, Indicator, and Subindicator -->
+  <div class="tabs" id="secondary-tabs">
+    <div class="tab" onclick="switchSubTab('subindex_overall_cur', 'Curriculum Subindex')">Curriculum</div>
+    <div class="tab" onclick="switchSubTab('subindex_overall_auto', 'Autonomy Subindex')">Autonomy</div>
+  </div>
+
+  <div class="tabs" id="indicator-tabs">
+    <div class="tab" onclick="switchIndicator('indicator_overall_cur_policy', 'Policy Indicator')">Policy</div>
+    <div class="tab" onclick="switchIndicator('indicator_overall_cur_prac', 'Practice Indicator')">Practice</div>
+  </div>
+
+  <div class="tabs" id="subindicator-tabs">
+    <div class="tab" onclick="switchSubIndicator('subindicator_overall_policy_auto_assess', 'Assessment Subindicator')">Assessment</div>
+    <div class="tab" onclick="switchSubIndicator('subindicator_overall_prac_auto_act', 'Activity Subindicator')">Activity</div>
+  </div>
+
+  <!-- Map Iframe -->
+  <iframe id="mapFrame" src="https://adrianaarellano.github.io/index_overall_2022/"></iframe>
+
+  <script>
+    let currentYear = "2022";
+    let currentIndex = "index_overall";
+    let currentSubindex = null;
+    let currentIndicator = null;
+    let currentSubIndicator = null;
+
+    const baseURL = "https://adrianaarellano.github.io/";
+
+    // URLs structure
+    const urls = {
+      index_overall: {
+        2022: "index_overall_2022/",
+        2016: "index_overall_2016/",
+        2009: "index_overall_2009/",
+        subindex: {
+          subindex_overall_cur: {
+            2022: "subindex_cur_2022/",
+            2016: "subindex_cur_2016/",
+            2009: "subindex_2009_cur/",
+            indicator: {
+              indicator_overall_cur_policy: {
+                2022: "indicator_2022_c_po/",
+                2016: "indicator_2016_c_pol/",
+                2009: "indicator_2009_cur_pol/",
+                subindicator: {
+                  subindicator_overall_policy_auto_assess: {
+                    2022: "cur_2022_aim/",
+                    2016: "cur_2016_aim_pol/",
+                    2009: "cur_2009_aim_pol/",
+                  },
+                },
+              },
+              indicator_overall_cur_prac: {
+                2022: "indicator_2022_c_prac/",
+                2016: "indicator_2016_c_prac/",
+                2009: "indicator_2009_cur_prac/",
+              },
+            },
+          },
+          subindex_overall_auto: {
+            2022: "subindex_2022_auto/",
+            2016: "subindex_2016_auto/",
+            2009: "subindex_2009_auto/",
+          },
+        },
+      },
+      index_non: {
+        2022: "index_non_2022/",
+        2016: "index_non_2016/",
+        2009: "index_non_2009/",
+        subindex: {
+          subindex_non_system_cur: {
+            2022: "subindex_cur_2022/",
+            2016: "subindex_cur_2016/",
+            2009: "subindex_cur_2009/",
+          },
+        },
+      },
+    };
+
+    // Handle year updates
+    function updateYear(year) {
+      currentYear = year;
+      updateIframe();
+    }
+
+    // Handle tab switching
+    function switchTab(index, breadcrumb) {
+      currentIndex = index;
+      currentSubindex = null;
+      currentIndicator = null;
+      currentSubIndicator = null;
+      updateIframe();
+    }
+
+    function switchSubTab(subindex, breadcrumb) {
+      currentSubindex = subindex;
+      currentIndicator = null;
+      currentSubIndicator = null;
+      updateIframe();
+    }
+
+    function switchIndicator(indicator, breadcrumb) {
+      currentIndicator = indicator;
+      currentSubIndicator = null;
+      updateIframe();
+    }
+
+    function switchSubIndicator(subIndicator, breadcrumb) {
+      currentSubIndicator = subIndicator;
+      updateIframe();
+    }
+
+    // Update iframe source dynamically
+    function updateIframe() {
+      let url = baseURL;
+
+      if (currentIndex) {
+        url += urls[currentIndex][currentYear];
+        if (currentSubindex) {
+          url += urls[currentIndex].subindex[currentSubindex][currentYear];
+          if (currentIndicator) {
+            url += urls[currentIndex].subindex[currentSubindex].indicator[currentIndicator][currentYear];
+            if (currentSubIndicator) {
+              url += urls[currentIndex].subindex[currentSubindex].indicator[currentIndicator].subindicator[currentSubIndicator][currentYear];
+            }
+          }
+        }
+      }
+
+      document.getElementById("mapFrame").src = url;
+    }
+  </script>
+</body>
+</html>
