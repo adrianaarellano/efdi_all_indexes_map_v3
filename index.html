@@ -125,12 +125,8 @@
 
     <div class="tab">
       Curriculum
-      <div class="dropdown-menu">
-        <div class="dropdown-item" onclick="switchTab('cur_policy_all', 'EfDI > Curriculum > All Indicators > Policy')">Policy</div>
-        <div class="dropdown-item" onclick="switchTab('cur_practice_all', 'EfDI > Curriculum > All Indicators >  Practice')">Practice</div>
-        <div class="dropdown-item" onclick="switchTab('cur_policy_non', 'EfDI > Curriculum > Non-system >  Policy')">Practice</div>
-        <div class="dropdown-item" onclick="switchTab('cur_practice_non', 'EfDI > Curriculum > Non-system >  Practice')">Practice</div>
-        
+      <div class="dropdown-menu" id="curriculum-dropdown">
+        <!-- These items will be dynamically shown/hidden based on the selection in the EfDI tab -->
       </div>
     </div>
 
@@ -163,6 +159,28 @@
     let currentTab = "efdi_all"; // Default tab
     const baseURL = "https://adrianaarellano.github.io/";
 
+    // Dynamically populate the curriculum options based on the selection in EfDI
+    function updateCurriculumOptions(efdiSelection) {
+      const curriculumDropdown = document.getElementById("curriculum-dropdown");
+
+      // Clear any existing items
+      curriculumDropdown.innerHTML = '';
+
+      if (efdiSelection === 'efdi_all') {
+        // Show the "All Indicators" options
+        curriculumDropdown.innerHTML = `
+          <div class="dropdown-item" onclick="switchTab('cur_policy_all', 'EfDI > Curriculum > All Indicators > Policy')">Policy</div>
+          <div class="dropdown-item" onclick="switchTab('cur_practice_all', 'EfDI > Curriculum > All Indicators > Practice')">Practice</div>
+        `;
+      } else if (efdiSelection === 'efdi_non_system') {
+        // Show the "Non-system" options
+        curriculumDropdown.innerHTML = `
+          <div class="dropdown-item" onclick="switchTab('cur_policy_non', 'EfDI > Curriculum > Non-system > Policy')">Policy</div>
+          <div class="dropdown-item" onclick="switchTab('cur_practice_non', 'EfDI > Curriculum > Non-system > Practice')">Practice</div>
+        `;
+      }
+    }
+
     function updateYear(year) {
       currentYear = year;
       switchTab(currentTab); 
@@ -191,7 +209,7 @@
 
         // Update the iframe source based on the current selection
         mapFrame.src = mapURLs[mapID] || mapURLs['efdi_all'];
-        
+
         // Update the breadcrumb path displayed
         breadcrumb.innerHTML = `<a href="#" onclick="resetBreadcrumb()">EfDI</a> > ${breadcrumbPath}`;
 
@@ -204,7 +222,9 @@
       breadcrumbPath = "EfDI > All Indicators";
       switchTab('efdi_all', 'All Indicators');
     }
+
+    // Initialize with the default "EfDI > All Indicators"
+    updateCurriculumOptions('efdi_all');
   </script>
 </body>
 </html>
-
