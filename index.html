@@ -121,14 +121,15 @@
   </style>
 </head>
 <body>
+
   <!-- Tabs for Sub-Indexes -->
   <div class="tabs">
-    <!-- Dropdown for EfDI -->
+    <!-- Tab for EfDI with Nested Dropdown -->
     <div class="tab">
       EfDI
       <div class="dropdown-menu">
         <div class="dropdown-item" onclick="switchTab('efdi_all', 'EfDI > All Indicators')">All Indicators</div>
-        <div class="dropdown-item" onclick="switchTab('non_system', 'EfDI > Non-system')">Non-system</div>
+        <div class="dropdown-item" onclick="switchTab('efdi_non_system', 'EfDI > Non-system')">Non-system</div>
       </div>
     </div>
 
@@ -143,10 +144,9 @@
 
     <!-- Add more tabs for other sub-indexes -->
     <div class="tab">
-      Autonomy
+      Training
       <div class="dropdown-menu">
-        <div class="dropdown-item" onclick="switchTab('auto_policy', 'EfDI > Autonomy > Policy')">Policy</div>
-        <div class="dropdown-item" onclick="switchTab('auto_practice', 'EfDI > Autonomy > Practice')">Practice</div>
+        <div class="dropdown-item" onclick="switchTab('training_policy', 'EfDI > Training > Policy')">Policy</div>
       </div>
     </div>
   </div>
@@ -194,11 +194,12 @@
       setTimeout(function () {
         const mapURLs = {
           efdi_all: `${baseURL}index_all_${currentYear}/`,
-          non_system: `${baseURL}index_non_${currentYear}/`,
+          efdi_non_system: `${baseURL}index_non_${currentYear}/`,
           cur_policy: `${baseURL}subindex_non-system_cur_${currentYear}/`,
-          cur_practice: `${baseURL}indicator_${currentYear}_non-system_cur_prac/`,
-          auto_policy: `${baseURL}subindex_non-system_${currentYear}_auto/`,
-          auto_practice: `${baseURL}indicator_non_system_${currentYear}_auto_prac/`
+          cur_practice: `${baseURL}indicator_non-system_cur_prac_${currentYear}/`,
+          training_policy: `${baseURL}training_policy_${currentYear}/`,
+          cur_aim_all: `${baseURL}subindicator_cur_all_${currentYear}/`,
+          cur_aim_non_system: `${baseURL}subindicator_cur_non_system_${currentYear}/`
         };
 
         mapFrame.src = mapURLs[mapID] || mapURLs['efdi_all'];
@@ -214,6 +215,13 @@
     // Function to reset breadcrumb to default
     function resetBreadcrumb() {
       switchTab('efdi_all', 'All Indicators');
+    }
+
+    // Navigate deeper into sub-indicators
+    function navigateToAim(isNonSystem) {
+      const breadcrumb = document.getElementById("breadcrumb-path");
+      const aimKey = isNonSystem ? 'cur_aim_non_system' : 'cur_aim_all';
+      switchTab(aimKey, breadcrumb.innerHTML + " > Aim");
     }
   </script>
 </body>
