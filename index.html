@@ -156,7 +156,8 @@
 
   <script>
     let currentYear = "2022";
-    let currentTab = "efdi_all";
+    let breadcrumbPath = "EfDI > All Indicators"; // Default breadcrumb
+    let currentTab = "efdi_all"; // Default tab
     const baseURL = "https://adrianaarellano.github.io/";
 
     function updateYear(year) {
@@ -164,10 +165,13 @@
       switchTab(currentTab); 
     }
 
-    function switchTab(mapID, breadcrumbPath = '') {
+    function switchTab(mapID, newBreadcrumbPath = '') {
       const mapFrame = document.getElementById("mapFrame");
       const breadcrumb = document.getElementById("breadcrumb-path");
       currentTab = mapID;
+
+      // Update the breadcrumb path
+      breadcrumbPath = newBreadcrumbPath || breadcrumbPath;
 
       mapFrame.classList.add("fade-out");
 
@@ -180,10 +184,11 @@
           training_policy: `${baseURL}training_policy_${currentYear}/`
         };
 
+        // Update the iframe source based on the current selection
         mapFrame.src = mapURLs[mapID] || mapURLs['efdi_all'];
-        if (breadcrumbPath) {
-          breadcrumb.innerHTML = `<a href="#" onclick="resetBreadcrumb()">EfDI</a> > ${breadcrumbPath}`;
-        }
+        
+        // Update the breadcrumb path displayed
+        breadcrumb.innerHTML = `<a href="#" onclick="resetBreadcrumb()">EfDI</a> > ${breadcrumbPath}`;
 
         mapFrame.classList.remove("fade-out");
         mapFrame.classList.add("fade-in");
@@ -191,8 +196,10 @@
     }
 
     function resetBreadcrumb() {
+      breadcrumbPath = "EfDI > All Indicators";
       switchTab('efdi_all', 'All Indicators');
     }
   </script>
 </body>
 </html>
+
