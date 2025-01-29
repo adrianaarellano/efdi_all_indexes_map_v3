@@ -4,38 +4,147 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EfDI Interactive Web Map</title>
+  <!-- CSS for styling -->
   <style>
-    /* General styles */
+    /* General Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Arial, sans-serif;
+      line-height: 1.5;
     }
 
-    .tabs, .year-selector {
-      margin: 10px;
+    /* Top Tabs */
+    .tabs {
+      display: flex;
+      justify-content: space-around;
+      background-color: #2c3e50;
+      color: white;
+      padding: 10px 0;
+      position: relative;
     }
 
-    .tabs div {
-      display: inline-block;
-      margin-right: 15px;
-      cursor: pointer;
+    .tab {
+      flex: 1;
+      text-align: center;
       padding: 10px;
-      background-color: #f4f4f4;
-      border: 1px solid #ddd;
-      border-radius: 5px;
+      transition: background-color 0.3s;
+      position: relative;
     }
 
-    .tabs div:hover, .tabs div.active-tab {
-      background-color: #ddd;
+    .tab:hover {
+      background-color: #34495e;
     }
 
+    .active-tab {
+      background-color: #1abc9c;
+    }
+
+    /* Dropdown Menu for Nested Navigation */
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: white;
+      width: 100%;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+    }
+
+    .tab:hover .dropdown-menu {
+      display: block;
+    }
+
+    .dropdown-item {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+      color: #2c3e50;
+      cursor: pointer;
+    }
+
+    .dropdown-item:hover {
+      background-color: #f1f1f1;
+    }
+
+    /* Breadcrumb Navigation */
+    #breadcrumbs {
+      padding: 10px;
+      background-color: #ecf0f1;
+      font-size: 0.9em;
+      margin: 0 0 10px;
+      display: flex;
+      gap: 5px;
+    }
+
+    #breadcrumbs span {
+      color: #2c3e50;
+    }
+
+    #breadcrumbs a {
+      text-decoration: none;
+      color: #3498db;
+    }
+
+    #breadcrumbs a:hover {
+      text-decoration: underline;
+    }
+
+    /* Year Selector */
+    .year-selector {
+      margin: 10px 0;
+      text-align: center;
+    }
+
+    /* Iframe Styling */
     #mapFrame {
+      display: block;
       width: 100%;
       height: 600px;
       border: none;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    /* Breadcrumb Transition */
+    .fade-out {
+      opacity: 0;
+    }
+
+    .fade-in {
+      opacity: 1;
     }
   </style>
 </head>
 <body>
+
+  <!-- Tabs for Sub-Indexes -->
+  <div class="tabs">
+    <!-- Tab for Overall Index -->
+    <div class="tab active-tab" onclick="switchTab('efdi_all', 'EfDI > All Indicators')">EfDI All</div>
+
+    <!-- Tab for Curriculum with Nested Dropdown -->
+    <div class="tab">
+      Curriculum
+      <div class="dropdown-menu">
+        <div class="dropdown-item" onclick="switchTab('cur_policy', 'EfDI > Curriculum > Policy')">Policy</div>
+        <div class="dropdown-item" onclick="switchTab('cur_practice', 'EfDI > Curriculum > Practice')">Practice</div>
+      </div>
+    </div>
+
+    <!-- Add more tabs for other sub-indexes -->
+    <div class="tab">
+      Training
+      <div class="dropdown-menu">
+        <div class="dropdown-item" onclick="switchTab('training_policy', 'EfDI > Training > Policy')">Policy</div>
+      </div>
+    </div>
+  </div>
+
   <!-- Year Selector -->
   <div class="year-selector">
     <label for="year">Select Year:</label>
@@ -46,144 +155,59 @@
     </select>
   </div>
 
-  <!-- Tabs for Navigation -->
-  <div class="tabs">
-    <div class="tab" onclick="switchTab('index_overall', 'Overall Index')">Overall Index</div>
-    <div class="tab" onclick="switchTab('index_non', 'Non-System Index')">Non-System Index</div>
-  </div>
-
-  <!-- Dropdown for Subindex, Indicator, and Subindicator -->
-  <div class="tabs" id="secondary-tabs">
-    <div class="tab" onclick="switchSubTab('subindex_overall_cur', 'Curriculum Subindex')">Curriculum</div>
-    <div class="tab" onclick="switchSubTab('subindex_overall_auto', 'Autonomy Subindex')">Autonomy</div>
-  </div>
-
-  <div class="tabs" id="indicator-tabs">
-    <div class="tab" onclick="switchIndicator('indicator_overall_cur_policy', 'Policy Indicator')">Policy</div>
-    <div class="tab" onclick="switchIndicator('indicator_overall_cur_prac', 'Practice Indicator')">Practice</div>
-  </div>
-
-  <div class="tabs" id="subindicator-tabs">
-    <div class="tab" onclick="switchSubIndicator('subindicator_overall_policy_auto_assess', 'Assessment Subindicator')">Assessment</div>
-    <div class="tab" onclick="switchSubIndicator('subindicator_overall_prac_auto_act', 'Activity Subindicator')">Activity</div>
+  <!-- Breadcrumb Navigation -->
+  <div id="breadcrumbs">
+    <span id="breadcrumb-path"><a href="#" onclick="resetBreadcrumb()">EfDI</a> > All Indicators</span>
   </div>
 
   <!-- Map Iframe -->
-  <iframe id="mapFrame" src="https://adrianaarellano.github.io/index_overall_2022/"></iframe>
+  <iframe id="mapFrame" src="https://adrianaarellano.github.io/index_all_2022/"></iframe>
 
+  <!-- JavaScript for Interactivity -->
   <script>
-    let currentYear = "2022";
-    let currentIndex = "index_overall";
-    let currentSubindex = null;
-    let currentIndicator = null;
-    let currentSubIndicator = null;
-
+    let currentYear = "2022"; // Default year
+    let currentTab = "efdi_all"; // Default tab
     const baseURL = "https://adrianaarellano.github.io/";
 
-    // URLs structure
-    const urls = {
-      index_overall: {
-        2022: "index_overall_2022/",
-        2016: "index_overall_2016/",
-        2009: "index_overall_2009/",
-        subindex: {
-          subindex_overall_cur: {
-            2022: "subindex_cur_2022/",
-            2016: "subindex_cur_2016/",
-            2009: "subindex_2009_cur/",
-            indicator: {
-              indicator_overall_cur_policy: {
-                2022: "indicator_2022_c_po/",
-                2016: "indicator_2016_c_pol/",
-                2009: "indicator_2009_cur_pol/",
-                subindicator: {
-                  subindicator_overall_policy_auto_assess: {
-                    2022: "cur_2022_aim/",
-                    2016: "cur_2016_aim_pol/",
-                    2009: "cur_2009_aim_pol/",
-                  },
-                },
-              },
-              indicator_overall_cur_prac: {
-                2022: "indicator_2022_c_prac/",
-                2016: "indicator_2016_c_prac/",
-                2009: "indicator_2009_cur_prac/",
-              },
-            },
-          },
-          subindex_overall_auto: {
-            2022: "subindex_2022_auto/",
-            2016: "subindex_2016_auto/",
-            2009: "subindex_2009_auto/",
-          },
-        },
-      },
-      index_non: {
-        2022: "index_non_2022/",
-        2016: "index_non_2016/",
-        2009: "index_non_2009/",
-        subindex: {
-          subindex_non_system_cur: {
-            2022: "subindex_cur_2022/",
-            2016: "subindex_cur_2016/",
-            2009: "subindex_cur_2009/",
-          },
-        },
-      },
-    };
-
-    // Handle year updates
+    // Function to handle year updates
     function updateYear(year) {
       currentYear = year;
-      updateIframe();
+      switchTab(currentTab); // Refresh the map with the new year
     }
 
-    // Handle tab switching
-    function switchTab(index, breadcrumb) {
-      currentIndex = index;
-      currentSubindex = null;
-      currentIndicator = null;
-      currentSubIndicator = null;
-      updateIframe();
-    }
+    // Function to handle tab switching and breadcrumb updates
+    function switchTab(mapID, breadcrumbPath = '') {
+      const mapFrame = document.getElementById("mapFrame");
+      const breadcrumb = document.getElementById("breadcrumb-path");
+      currentTab = mapID; // Update the current tab
 
-    function switchSubTab(subindex, breadcrumb) {
-      currentSubindex = subindex;
-      currentIndicator = null;
-      currentSubIndicator = null;
-      updateIframe();
-    }
+      // Fade out the iframe
+      mapFrame.classList.add("fade-out");
 
-    function switchIndicator(indicator, breadcrumb) {
-      currentIndicator = indicator;
-      currentSubIndicator = null;
-      updateIframe();
-    }
+      // Update iframe source after delay
+      setTimeout(function () {
+        const mapURLs = {
+          efdi_all: `${baseURL}index_all_${currentYear}/`,
+          cur_policy: `${baseURL}cur_policy_${currentYear}/`,
+          cur_practice: `${baseURL}cur_practice_${currentYear}/`,
+          training_policy: `${baseURL}training_policy_${currentYear}/`
+        };
 
-    function switchSubIndicator(subIndicator, breadcrumb) {
-      currentSubIndicator = subIndicator;
-      updateIframe();
-    }
-
-    // Update iframe source dynamically
-    function updateIframe() {
-      let url = baseURL;
-
-      if (currentIndex) {
-        url += urls[currentIndex][currentYear];
-        if (currentSubindex) {
-          url += urls[currentIndex].subindex[currentSubindex][currentYear];
-          if (currentIndicator) {
-            url += urls[currentIndex].subindex[currentSubindex].indicator[currentIndicator][currentYear];
-            if (currentSubIndicator) {
-              url += urls[currentIndex].subindex[currentSubindex].indicator[currentIndicator].subindicator[currentSubIndicator][currentYear];
-            }
-          }
+        mapFrame.src = mapURLs[mapID] || mapURLs['efdi_all'];
+        if (breadcrumbPath) {
+          breadcrumb.innerHTML = `<a href="#" onclick="resetBreadcrumb()">EfDI</a> > ${breadcrumbPath}`;
         }
-      }
+        
+        mapFrame.classList.remove("fade-out");
+        mapFrame.classList.add("fade-in");
+      }, 500);
+    }
 
-      document.getElementById("mapFrame").src = url;
+    // Function to reset breadcrumb to default
+    function resetBreadcrumb() {
+      switchTab('efdi_all', 'All Indicators');
     }
   </script>
 </body>
 </html>
+
