@@ -129,6 +129,7 @@
       <div class="dropdown-menu">
         <div class="dropdown-item" onclick="switchTopLevel('efdi_all', 'All Indicators')">All Indicators</div>
         <div class="dropdown-item" onclick="switchTopLevel('efdi_non_system', 'Non-system')">Non-system</div>
+        <div class="dropdown-item" onclick="switchTopLevel('efdi_levels', 'Levels')">Levels</div>
       </div>
     </div>
 
@@ -168,11 +169,15 @@
     const curriculumOptions = {
       efdi_all: [
         { id: "cur_policy_all", label: "Policy", breadcrumb: "All Indicators > Curriculum > Policy" },
-        { id: "cur_practice_all", label: "Practice", breadcrumb: "All Indicators  > Curriculum > Practice" }
+        { id: "cur_practice_all", label: "Practice", breadcrumb: "All Indicators  > Curriculum > Practice" },
       ],
       efdi_non_system: [
         { id: "cur_policy_non", label: "Policy", breadcrumb: "Non-system > Curriculum > Policy" },
         { id: "cur_practice_non", label: "Practice", breadcrumb: "Non-system > Curriculum > Practice" }
+      ],
+      efdi_levels: [
+        { id: "cur_policy_levels", label: "Policy", breadcrumb: "Levels > Curriculum > Policy" },
+        { id: "cur_practice_levels", label: "Practice", breadcrumb: "Levels > Curriculum > Practice" }
       ]
     };
 
@@ -218,6 +223,8 @@
           cur_practice_all: `${baseURL}indicator_${currentYear}_cur_prac/`,
           cur_policy_non: `${baseURL}indicator_${currentYear}_cur_pol/`,
           cur_practice_non: `${baseURL}indicator_${currentYear}_cur_prac/`,
+          cur_policy_levels: `${baseURL}indicator_level_${currentYear}_cur_pol/`,
+          cur_practice_levels: `${baseURL}indicator_level_${currentYear}_cur_prac/`,
           training_policy: `${baseURL}training_policy_${currentYear}/`
         };
 
