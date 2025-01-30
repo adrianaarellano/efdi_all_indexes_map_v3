@@ -129,7 +129,10 @@
       <div class="dropdown-menu">
         <div class="dropdown-item" onclick="switchTopLevel('efdi_all', 'All Indicators')">All Indicators</div>
         <div class="dropdown-item" onclick="switchTopLevel('efdi_non_system', 'Non-system')">Non-system</div>
+        <div class="dropdown-item" onclick="switchTopLevel('efdi_policy', 'Policy')">Policy</div>
+        <div class="dropdown-item" onclick="switchTopLevel('efdi_practice', 'Practice')">Practice</div>
         <div class="dropdown-item" onclick="switchTopLevel('efdi_levels', 'Levels')">Levels</div>
+        <div class="dropdown-item" onclick="switchTopLevel('efdi_equality', 'Equality')">Equality</div>
       </div>
     </div>
 
@@ -219,7 +222,10 @@
         const mapURLs = {
           efdi_all: `${baseURL}index_all_${currentYear}/`,
           efdi_non_system: `${baseURL}index_non_${currentYear}/`,
+          efdi_policy: `${baseURL}index_policy${currentYear}/`,
+          efdi_practice: `${baseURL}index_practice${currentYear}/`,
           efdi_levels: `${baseURL}index_levels_${currentYear}/`,
+          efdi_equality: `${baseURL}index_equality_${currentYear}/`,
           cur_policy_all: `${baseURL}indicator_${currentYear}_cur_pol/`,
           cur_practice_all: `${baseURL}indicator_${currentYear}_cur_prac/`,
           cur_policy_non: `${baseURL}indicator_${currentYear}_cur_pol/`,
