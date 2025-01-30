@@ -90,9 +90,18 @@
       text-decoration: underline;
     }
 
-    .year-selector {
-      margin: 10px 0;
+    .year-slider {
+      margin: 20px 0;
       text-align: center;
+    }
+
+    #yearRange {
+      width: 300px;
+    }
+
+    #selectedYear {
+      margin-top: 10px;
+      font-weight: bold;
     }
 
     #mapFrame {
@@ -118,16 +127,14 @@
     <div class="tab">
       EfDI
       <div class="dropdown-menu">
-        <div class="dropdown-item" onclick="switchTab('efdi_all', 'EfDI > All Indicators')">All Indicators</div>
-        <div class="dropdown-item" onclick="switchTab('efdi_non_system', 'EfDI > Non-system')">Non-system</div>
+        <div class="dropdown-item" onclick="switchTopLevel('efdi_all', 'EfDI > All Indicators')">All Indicators</div>
+        <div class="dropdown-item" onclick="switchTopLevel('efdi_non_system', 'EfDI > Non-system')">Non-system</div>
       </div>
     </div>
 
     <div class="tab">
       Curriculum
-      <div class="dropdown-menu" id="curriculum-dropdown">
-        <!-- These items will be dynamically shown/hidden based on the selection in the EfDI tab -->
-      </div>
+      <div class="dropdown-menu" id="curriculumDropdown"></div>
     </div>
 
     <div class="tab">
@@ -138,13 +145,10 @@
     </div>
   </div>
 
-  <div class="year-selector">
-    <label for="year">Select Year:</label>
-    <select id="year" onchange="updateYear(this.value)">
-      <option value="2022" selected>2022</option>
-      <option value="2016">2016</option>
-      <option value="2009">2009</option>
-    </select>
+  <div class="year-slider">
+    <label for="yearRange">Select Year:</label><br>
+    <input type="range" id="yearRange" min="0" max="2" step="1" value="2" oninput="updateYear(this.value)">
+    <div id="selectedYear">2022</div>
   </div>
 
   <div id="breadcrumbs">
@@ -157,33 +161,44 @@
     let currentYear = "2022";
     let breadcrumbPath = "EfDI > All Indicators"; // Default breadcrumb
     let currentTab = "efdi_all"; // Default tab
+    let topLevelSelection = "efdi_all"; // Track top-level selection
     const baseURL = "https://adrianaarellano.github.io/";
+    const years = ["2009", "2016", "2022"];
 
-    // Dynamically populate the curriculum options based on the selection in EfDI
-    function updateCurriculumOptions(efdiSelection) {
-      const curriculumDropdown = document.getElementById("curriculum-dropdown");
+    const curriculumOptions = {
+      efdi_all: [
+        { id: "cur_policy_all", label: "Policy", breadcrumb: "EfDI > Curriculum > All Indicators > Policy" },
+        { id: "cur_practice_all", label: "Practice", breadcrumb: "EfDI > Curriculum > All Indicators > Practice" }
+      ],
+      efdi_non_system: [
+        { id: "cur_policy_non", label: "Policy", breadcrumb: "EfDI > Curriculum > Non-system > Policy" },
+        { id: "cur_practice_non", label: "Practice", breadcrumb: "EfDI > Curriculum > Non-system > Practice" }
+      ]
+    };
 
-      // Clear any existing items
-      curriculumDropdown.innerHTML = '';
-
-      if (efdiSelection === 'efdi_all') {
-        // Show the "All Indicators" options
-        curriculumDropdown.innerHTML = `
-          <div class="dropdown-item" onclick="switchTab('cur_policy_all', 'EfDI > Curriculum > All Indicators > Policy')">Policy</div>
-          <div class="dropdown-item" onclick="switchTab('cur_practice_all', 'EfDI > Curriculum > All Indicators > Practice')">Practice</div>
-        `;
-      } else if (efdiSelection === 'efdi_non_system') {
-        // Show the "Non-system" options
-        curriculumDropdown.innerHTML = `
-          <div class="dropdown-item" onclick="switchTab('cur_policy_non', 'EfDI > Curriculum > Non-system > Policy')">Policy</div>
-          <div class="dropdown-item" onclick="switchTab('cur_practice_non', 'EfDI > Curriculum > Non-system > Practice')">Practice</div>
-        `;
-      }
+    function updateYear(index) {
+      currentYear = years[index];
+      document.getElementById("selectedYear").textContent = currentYear;
+      switchTab(currentTab); 
     }
 
-    function updateYear(year) {
-      currentYear = year;
-      switchTab(currentTab); 
+    function switchTopLevel(selection, newBreadcrumbPath) {
+      topLevelSelection = selection;
+      switchTab(selection, newBreadcrumbPath);
+      updateCurriculumDropdown();
+    }
+
+    function updateCurriculumDropdown() {
+      const dropdown = document.getElementById("curriculumDropdown");
+      dropdown.innerHTML = ""; // Clear existing items
+
+      curriculumOptions[topLevelSelection].forEach(option => {
+        const item = document.createElement("div");
+        item.className = "dropdown-item";
+        item.textContent = option.label;
+        item.onclick = () => switchTab(option.id, option.breadcrumb);
+        dropdown.appendChild(item);
+      });
     }
 
     function switchTab(mapID, newBreadcrumbPath = '') {
@@ -191,7 +206,6 @@
       const breadcrumb = document.getElementById("breadcrumb-path");
       currentTab = mapID;
 
-      // Update the breadcrumb path
       breadcrumbPath = newBreadcrumbPath || breadcrumbPath;
 
       mapFrame.classList.add("fade-out");
@@ -202,15 +216,13 @@
           efdi_non_system: `${baseURL}index_non_${currentYear}/`,
           cur_policy_all: `${baseURL}indicator_${currentYear}_cur_pol/`,
           cur_practice_all: `${baseURL}indicator_${currentYear}_cur_prac/`,
-          cur_policy_non: `${baseURL}indicator_${currentYear}_cur_pol/`,
-          cur_practice_non: `${baseURL}indicator_${currentYear}_cur_prac/`,
+          cur_policy_non: `${baseURL}indicator_non_${currentYear}_cur_pol/`,
+          cur_practice_non: `${baseURL}indicator_non_${currentYear}_cur_prac/`,
           training_policy: `${baseURL}training_policy_${currentYear}/`
         };
 
-        // Update the iframe source based on the current selection
         mapFrame.src = mapURLs[mapID] || mapURLs['efdi_all'];
 
-        // Update the breadcrumb path displayed
         breadcrumb.innerHTML = `<a href="#" onclick="resetBreadcrumb()">EfDI</a> > ${breadcrumbPath}`;
 
         mapFrame.classList.remove("fade-out");
@@ -223,8 +235,8 @@
       switchTab('efdi_all', 'All Indicators');
     }
 
-    // Initialize with the default "EfDI > All Indicators"
-    updateCurriculumOptions('efdi_all');
+    // Initialize the curriculum dropdown with the default selection
+    updateCurriculumDropdown();
   </script>
 </body>
 </html>
