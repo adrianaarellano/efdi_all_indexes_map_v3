@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EfDI Interactive Web Map</title>
+  <!-- CSS for styling -->
   <style>
     * {
       margin: 0;
@@ -90,20 +91,17 @@
     }
 
     .year-slider {
-      margin: 10px 20px;
+      margin: 20px 0;
       text-align: center;
     }
 
-    .slider {
-      width: 90%;
-      margin: 10px auto;
+    #yearRange {
+      width: 300px;
     }
 
-    .slider-label {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.9em;
-      padding: 0 5%;
+    #selectedYear {
+      margin-top: 10px;
+      font-weight: bold;
     }
 
     #mapFrame {
@@ -124,6 +122,7 @@
   </style>
 </head>
 <body>
+
   <div class="tabs">
     <div class="tab">
       EfDI
@@ -135,8 +134,11 @@
 
     <div class="tab">
       Curriculum
-      <div class="dropdown-menu" id="curriculum-dropdown">
-        <!-- Dynamically populated options -->
+      <div class="dropdown-menu">
+        <div class="dropdown-item" onclick="switchTab('cur_policy_all', 'EfDI > Curriculum > All Indicators > Policy')">Policy</div>
+        <div class="dropdown-item" onclick="switchTab('cur_practice_all', 'EfDI > Curriculum > All Indicators > Practice')">Practice</div>
+        <div class="dropdown-item" onclick="switchTab('cur_policy_non', 'EfDI > Curriculum > Non-system > Policy')">Policy</div>
+        <div class="dropdown-item" onclick="switchTab('cur_practice_non', 'EfDI > Curriculum > Non-system > Practice')">Practice</div>
       </div>
     </div>
 
@@ -149,13 +151,9 @@
   </div>
 
   <div class="year-slider">
-    <input type="range" min="2009" max="2022" value="2022" step="1" class="slider" id="yearSlider" oninput="updateYearLabel(this.value)" onchange="updateYear(this.value)">
-    <div class="slider-label">
-      <span>2009</span>
-      <span>2016</span>
-      <span>2022</span>
-    </div>
-    <p>Selected Year: <span id="selectedYear">2022</span></p>
+    <label for="yearRange">Select Year:</label><br>
+    <input type="range" id="yearRange" min="0" max="2" step="1" value="2" oninput="updateYear(this.value)">
+    <div id="selectedYear">2022</div>
   </div>
 
   <div id="breadcrumbs">
@@ -169,14 +167,12 @@
     let breadcrumbPath = "EfDI > All Indicators"; // Default breadcrumb
     let currentTab = "efdi_all"; // Default tab
     const baseURL = "https://adrianaarellano.github.io/";
+    const years = ["2009", "2016", "2022"];
 
-    function updateYearLabel(year) {
-      document.getElementById("selectedYear").innerText = year;
-    }
-
-    function updateYear(year) {
-      currentYear = year;
-      switchTab(currentTab);
+    function updateYear(index) {
+      currentYear = years[index];
+      document.getElementById("selectedYear").textContent = currentYear;
+      switchTab(currentTab); 
     }
 
     function switchTab(mapID, newBreadcrumbPath = '') {
@@ -184,7 +180,6 @@
       const breadcrumb = document.getElementById("breadcrumb-path");
       currentTab = mapID;
 
-      // Update the breadcrumb path
       breadcrumbPath = newBreadcrumbPath || breadcrumbPath;
 
       mapFrame.classList.add("fade-out");
@@ -200,10 +195,8 @@
           training_policy: `${baseURL}training_policy_${currentYear}/`
         };
 
-        // Update the iframe source based on the current selection
         mapFrame.src = mapURLs[mapID] || mapURLs['efdi_all'];
 
-        // Update the breadcrumb path displayed
         breadcrumb.innerHTML = `<a href="#" onclick="resetBreadcrumb()">EfDI</a> > ${breadcrumbPath}`;
 
         mapFrame.classList.remove("fade-out");
@@ -215,9 +208,6 @@
       breadcrumbPath = "EfDI > All Indicators";
       switchTab('efdi_all', 'All Indicators');
     }
-
-    // Initialize with the default "EfDI > All Indicators"
-    updateYearLabel(currentYear);
   </script>
 </body>
 </html>
