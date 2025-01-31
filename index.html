@@ -171,24 +171,28 @@
 
     const curriculumOptions = {
       efdi_all: [
+        { id: "cur_all", label: "Field", breadcrumb: "All Indicators > Curriculum" },
         { id: "cur_policy_all", label: "Policy", breadcrumb: "All Indicators > Curriculum > Policy" },
         { id: "cur_practice_all", label: "Practice", breadcrumb: "All Indicators  > Curriculum > Practice" },
       ],
       efdi_non_system: [
+        { id: "cur_non", label: "Field", breadcrumb: "Non-system > Curriculum" },
         { id: "cur_policy_non", label: "Policy", breadcrumb: "Non-system > Curriculum > Policy" },
         { id: "cur_practice_non", label: "Practice", breadcrumb: "Non-system > Curriculum > Practice" }
       ],
       efdi_policy: [
-        { id: "cur_policy_policy", label: "Policy", breadcrumb: "Policy > Curriculum > Policy" }
+        { id: "cur_policy_policy", label: "Field", breadcrumb: "Policy > Curriculum" }
       ],
       efdi_practice: [
-        { id: "cur_practice_practice", label: "Practice", breadcrumb: "Practice > Curriculum > Practice" }
+        { id: "cur_practice_practice", label: "Field", breadcrumb: "Practice > Curriculum" }
       ],
       efdi_levels: [
+        { id: "cur_levels", label: "Field", breadcrumb: "Levels > Curriculum" },
         { id: "cur_policy_levels", label: "Policy", breadcrumb: "Levels > Curriculum > Policy" },
         { id: "cur_practice_levels", label: "Practice", breadcrumb: "Levels > Curriculum > Practice" }
       ],
       efdi_equality: [
+        { id: "cur_equality", label: "Field", breadcrumb: "Equality > Curriculum" },
         { id: "cur_policy_equality", label: "Policy", breadcrumb: "Equality > Curriculum > Policy" }
       ]
     };
@@ -235,6 +239,10 @@
           efdi_practice: `${baseURL}index_practice_${currentYear}/`,
           efdi_levels: `${baseURL}index_levels_${currentYear}/`,
           efdi_equality: `${baseURL}index_equality_${currentYear}/`,
+          cur_all: `${baseURL}subindex_cur_${currentYear}/`,
+          cur_non: `${baseURL}subindex_cur_${currentYear}/`,
+          cur_levels: `${baseURL}subindex_level_${currentYear}_cur/`,
+          cur_equality: `${baseURL}subindex_eq_${currentYear}_cur/`,
           cur_policy_all: `${baseURL}indicator_${currentYear}_cur_pol/`,
           cur_policy_non: `${baseURL}indicator_${currentYear}_cur_pol/`,
           cur_policy_policy: `${baseURL}indicator_${currentYear}_cur_pol/`,
