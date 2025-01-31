@@ -173,15 +173,18 @@
       efdi_all: [
         { id: "cur_all", label: "Field", breadcrumb: "All Indicators > Curriculum" },
         { id: "cur_policy_all", label: "Policy", breadcrumb: "All Indicators > Curriculum > Policy" },
+        { id: "cur_policy_all_aim", label: "Aim", breadcrumb: "All Indicators > Curriculum > Policy > Aim" },
         { id: "cur_practice_all", label: "Practice", breadcrumb: "All Indicators  > Curriculum > Practice" },
       ],
       efdi_non_system: [
         { id: "cur_non", label: "Field", breadcrumb: "Non-system > Curriculum" },
         { id: "cur_policy_non", label: "Policy", breadcrumb: "Non-system > Curriculum > Policy" },
+        { id: "cur_policy_non_aim", label: "Aim", breadcrumb: "Non-system > Curriculum > Policy > Aim" },
         { id: "cur_practice_non", label: "Practice", breadcrumb: "Non-system > Curriculum > Practice" }
       ],
       efdi_policy: [
-        { id: "cur_policy_policy", label: "Field", breadcrumb: "Policy > Curriculum" }
+        { id: "cur_policy_policy", label: "Field", breadcrumb: "Policy > Curriculum" },
+        { id: "cur_policy_aim", label: "Aim", breadcrumb: "Policy > Curriculum > Aim" }
       ],
       efdi_practice: [
         { id: "cur_practice_practice", label: "Field", breadcrumb: "Practice > Curriculum" }
@@ -189,11 +192,13 @@
       efdi_levels: [
         { id: "cur_levels", label: "Field", breadcrumb: "Levels > Curriculum" },
         { id: "cur_policy_levels", label: "Policy", breadcrumb: "Levels > Curriculum > Policy" },
+        { id: "cur_policy_levels_aim", label: "Aim", breadcrumb: "Levels > Curriculum > Policy > Aim" },
         { id: "cur_practice_levels", label: "Practice", breadcrumb: "Levels > Curriculum > Practice" }
       ],
       efdi_equality: [
         { id: "cur_equality", label: "Field", breadcrumb: "Equality > Curriculum" },
-        { id: "cur_policy_equality", label: "Policy", breadcrumb: "Equality > Curriculum > Policy" }
+        { id: "cur_policy_equality", label: "Policy", breadcrumb: "Equality > Curriculum > Policy" },
+        { id: "cur_policy_equality", label: "Aim", breadcrumb: "Equality > Curriculum > Policy > Aim" }
       ]
     };
 
@@ -248,6 +253,11 @@
           cur_policy_policy: `${baseURL}indicator_${currentYear}_cur_pol/`,
           cur_policy_levels: `${baseURL}indicator_level_${currentYear}_cur_pol/`,
           cur_policy_equality: `${baseURL}indicator_eq_${currentYear}_cur_pol/`,
+          cur_policy_all_aim: `${baseURL}cur_${currentYear}_aim_pol/`,
+          cur_policy_non_aim: `${baseURL}cur_${currentYear}_aim_pol/`,
+          cur_policy_aim: `${baseURL}cur_${currentYear}_aim_pol/`,
+          cur_policy_levels: `${baseURL}cur_level_${currentYear}_aim_pol/`,
+          cur_policy_equality: `${baseURL}cur_eq_${currentYear}_aim_pol/`,
           cur_practice_all: `${baseURL}indicator_${currentYear}_cur_prac/`,
           cur_practice_non: `${baseURL}indicator_${currentYear}_cur_prac/`,
           cur_practice_practice: `${baseURL}indicator_${currentYear}_cur_prac/`,
